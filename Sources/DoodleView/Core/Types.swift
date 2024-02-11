@@ -37,26 +37,38 @@ public enum Expr {
     indirect case vector([Expr])
     indirect case map([ExprKey: Expr])
     indirect case lambda(Lambda)
+    
     case view(ViewExpr)
     
-    public enum ViewExpr {
+    public indirect enum ViewExpr {
+        case hStack(ViewExpr)
+        case vStack(ViewExpr)
+        case zStack(ViewExpr)
+        
         case text(String, TextModifiers)
         case rect(Color, CGSize)
+        
     }
     
 }
 
-public typealias TextModifiers = (
-    fontWeight: Font.Weight?,
-    fontSize: CGFloat?,
-    color: Color?,
-    customFontName: String?
-)
+public struct TextModifiers {
+    let font: Font?
+    let fontWeight: Font.Weight?
+    let foregroundColor: Color?
+    let fontSize: CGFloat?
+    let backgroundColor: Color?
+    let customFontName: String?
+}
 
-public typealias RectModifiers = (
-    color: Color?,
-    size: CGSize?
-)
+public struct RectModifiers {
+    let frame: (width: CGFloat?,
+                height: CGFloat?,
+                alignment: Alignment)?
+    let color: Color?
+    let size: CGSize?
+    let cornerRadios: CGFloat?
+}
 
 
 enum ViewError: Error {

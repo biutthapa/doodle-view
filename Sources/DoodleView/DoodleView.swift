@@ -249,12 +249,13 @@ public let viewsNS: [String: Lambda] = [
             throw ViewError.missingRequiredArgument("Text content is required.")
         }
 
-        let modifiers = TextModifiers(
-            fontWeight: nil,
-            fontSize: nil,
-            color: nil,
-            customFontName: nil
-        )
+        let modifiers = TextModifiers(font: nil,
+                                      fontWeight: nil,
+                                      foregroundColor: nil,
+                                      fontSize: nil,
+                                      backgroundColor: nil,
+                                      customFontName: nil)
+        
         return .view(.text(text, modifiers))
     },
     "rect": { args in
@@ -342,8 +343,14 @@ private func extractTextModifiers(from properties: [ExprKey: Expr]) -> TextModif
     let fontSize = properties[.keyword("fontSize")].flatMap { if case let .number(value) = $0 { return CGFloat(value) } else { return nil } }
     let color = properties[.keyword("foreground-color")].flatMap { colorFromString($0) }
     let customFontName = properties[.keyword("customFontName")].flatMap { if case let .string(value) = $0 { return value } else { return nil } }
-    
-    return (fontWeight, fontSize, color, customFontName)
+
+    return TextModifiers(font: nil,
+                         fontWeight: fontWeight,
+                         foregroundColor: color,
+                         fontSize: fontSize,
+                         backgroundColor: nil,
+                         customFontName: customFontName)
+
 }
 
 private func extractRectModifiers(from properties: [ExprKey: Expr]) -> RectModifiers {
@@ -356,8 +363,12 @@ private func extractRectModifiers(from properties: [ExprKey: Expr]) -> RectModif
         }
         return CGSize(width: width, height: height)
     }
-    
-    return (color: color, size: size)
+
+    return RectModifiers(frame: nil,
+                         color: color,
+                         size: size,
+                         cornerRadios: nil)
+
 }
 
 
@@ -404,10 +415,12 @@ public func makeView(from viewExpr: Expr.ViewExpr) -> some View {
         Text(string)
             .fontWeight(modifiers.fontWeight)
             .font(.custom(modifiers.customFontName ?? "System", size: modifiers.fontSize ?? 17))
-            .foregroundColor(modifiers.color ?? .primary)
+            .foregroundColor(modifiers.foregroundColor ?? .primary)
     case let .rect(color, size):
         Rectangle()
             .fill(color)
             .frame(width: size.width, height: size.height)
+    default:
+        Text("Potato")
     }
 }
