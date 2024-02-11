@@ -283,6 +283,7 @@ public let viewsNS: [String: Lambda] = [
 
 // MARK: Make Views
 public func readViewExprs(from input: String, env: Env) -> [Expr.ViewExpr] {
+    let trimmedString = input.trimmingCharacters(in: .whitespacesAndNewlines)
     let exprs = READ(input)
     var viewExprs: [Expr.ViewExpr] = []
 
